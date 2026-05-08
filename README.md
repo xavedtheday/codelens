@@ -1,5 +1,5 @@
 # CodeLens: An AI Code Investigator.
-## Developed By Raghiiboii Baxtor | 7 Oct '25
+## Developed By Xavier Kohler | 7 Oct '25
 
 Paste a code snippet in the block → **Investigate** it (Gemini) to detect language & errors → **Rewrite** it (GPT) to make changes and add comments.  
 Tools & Languages: React, Python FastAPI backend, logs to **Postgres (Supabase)**. 
