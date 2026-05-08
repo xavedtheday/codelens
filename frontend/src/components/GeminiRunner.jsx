@@ -1,5 +1,6 @@
 // src/components/GeminiRunner.jsx
 import { useState } from "react";
+import OutputCodeBlock from "./OutputCodeBlock";
 
 export default function GeminiRunner() {
   const [input, setInput] = useState("");
@@ -7,7 +8,9 @@ export default function GeminiRunner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+  const API = import.meta.env.DEV
+  ? "http://127.0.0.1:8000"               // dev access
+  : import.meta.env.VITE_API_URL; // live backend on Render 
 
   async function handleInvestigate() {
     setError("");
@@ -15,7 +18,7 @@ export default function GeminiRunner() {
     setOutput(null);
 
     if (!input.trim()) {
-      setError("I'm hungry, there's no code to chew on. Paste some code in the box above.");
+      setError("I'm hungry! Paste some python code in the box above 🤤🐍");
       setLoading(false);
       return;
     }
@@ -52,13 +55,13 @@ export default function GeminiRunner() {
           parsed = data;
         }
       } catch {
-        parsed = { error: "Failed to parse Gemini’s response." };
+        parsed = { error: "Ouch, Gemini sucker punched me 🥊🥲 Try again?" };
       }
 
       // 3️⃣ Update UI
       setOutput(parsed);
     } catch (e) {
-      setError(e.message || "Something went wrong.");
+      setError(e.message || "Shucks! Something's up.");
     } finally {
       setLoading(false);
     }
@@ -71,18 +74,21 @@ export default function GeminiRunner() {
   }
 
   return (
-    <section className="w-full flex flex-col gap-6 text-zinc-100">
+    <section className="min-w-full flex flex-col item-center  lg:flex-row gap-6 text-stone-200">
       {/* Input box */}
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-zinc-400">
-          Input your Python code
+      <div className="flex flex-col gap-2 min-w-2xl max-w-4xl min-h-[500px] max-h-full">
+        <label className="text-sm font-medium text-stone-400">
+          <span class="font-bold text-stone-200">Step 1:</span> Add your broken Python code 👇❤️‍🩹
+        </label>
+        <label className="text-sm font-medium text-stone-400">
+          <span class="font-bold text-stone-200">Step 2:</span> Click Investigate 🕵️‍♂️🧩
         </label>
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Paste or type code here..."
-          className="min-h-[280px] w-full rounded-md border border-zinc-800 bg-[#1E1E1E]
-                     text-zinc-100 placeholder-zinc-500 p-3 font-mono text-sm
+          className="min-h-[400px] w-full rounded-md border border-stone-800 bg-[#1E1E1E]
+                     text-stone-200 placeholder-stone-500 p-3 font-mono text-sm
                      outline-none focus:ring-1 focus:ring-[#85FF58]/20"
         />
 
@@ -90,14 +96,14 @@ export default function GeminiRunner() {
           <button
             onClick={handleInvestigate}
             disabled={loading}
-            className="px-4 py-2 bg-[#85FF58] text-black rounded font-medium hover:bg-[#9AFF73] transition-colors"
+            className="px-4 py-2 bg-[#A2FF7F] hover:rounded-xl text-black rounded-sm font-medium  transition-colors"
           >
-            {loading ? "Investigating…" : "Investigate"}
+            {loading ? "Working..." : "Investigate"}
           </button>
 
           <button
             onClick={clearAll}
-            className="px-4 py-2 bg-zinc-800 text-zinc-200 rounded font-medium hover:bg-zinc-700 transition-colors"
+            className="px-4 py-2 bg-stone-800  hover:rounded-xl text-stone-200 rounded font-medium hover:bg-stone-700 transition-colors"
           >
             Clear
           </button>
@@ -105,10 +111,14 @@ export default function GeminiRunner() {
       </div>
 
       {/* Output Section */}
-      <div className="border border-zinc-800 rounded-md bg-zinc-900 p-4 min-h-[280px]">
-        <h3 className="text-lg font-semibold text-[#85FF58] mb-2 flex items-center gap-1">
-          <span role="img" aria-label="brain">🧠</span> Gemini Analysis
-        </h3>
+       <div className="flex flex-col gap-2 min-w-2xl max-w-4xl min-h-[500px] max-h-full">
+       <label className="text-sm font-medium text-stone-400">
+            <span class="font-bold text-stone-200">Step 3:</span> Grab your dreamy code & go! 🛸💫
+        </label>
+         <label className="text-sm font-medium text-stone-400">
+           --
+        </label>
+      <div className="  rounded-md border border-stone-800 bg-[#1E1E1E] p-4 min-h-[500px] max-h-full min-w-2xl max-w-4xl">
 
         {error && (
           <div className="p-3 rounded-md bg-red-900/40 border border-red-700 text-red-200">
@@ -117,14 +127,14 @@ export default function GeminiRunner() {
         )}
 
         {!error && loading && (
-          <p className="text-zinc-500 italic">Thinking... crunching your code...</p>
+          <p className="text-stone-400 text-sm italic">Chatting to Gemini... 💬♊️ (they talk a lot) </p>
         )}
 
         {!loading && !error && output && (
           <>
             {output.bug_count !== undefined ? (
               <div className="space-y-3">
-                <p className="text-zinc-300">
+                <p className="text-stone-300">
                 <strong>
                     🐛 Found {(output.bugs?.length ?? output.bug_count) || 0} bug{((output.bugs?.length ?? output.bug_count) || 0) !== 1 && "s"}:
                 </strong>
@@ -132,32 +142,28 @@ export default function GeminiRunner() {
                 </p>
 
                 {output.bugs && (
-                  <ul className="list-disc ml-6 text-zinc-400">
+                  <ul className="list-disc ml-6 text-stone-400">
                     {output.bugs.map((b, i) => (
                       <li key={i}>{b}</li>
                     ))}
                   </ul>
                 )}
 
-                {output.corrected_code && (
-                  <div className="mt-3">
-                    <p className="text-zinc-300 font-medium mb-1">
-                      ✅ Corrected Code:
-                    </p>
-                    <pre className="p-3 rounded-md bg-black/50 border border-zinc-800 text-sm font-mono whitespace-pre-wrap text-zinc-100">
-                      {output.corrected_code}
-                    </pre>
-                  </div>
+                {output.tip && (
+                  <p className="text-sm text-[#FFF3A1] mt-3">
+                    💡 <strong>Pro Tip:</strong> <span className=" text-[#FFF8C8]"> {output.tip}</span>
+                  </p>
                 )}
 
-                {output.tip && (
-                  <p className="text-sm text-zinc-400 mt-3">
-                    💡 <strong>Tip:</strong> {output.tip}
-                  </p>
+
+                {output.corrected_code && (
+                  <div className="mt-5">
+                     <OutputCodeBlock title="Input Code" language="python" code={output.corrected_code}/>
+                  </div>
                 )}
               </div>
             ) : (
-              <pre className="text-sm font-mono text-zinc-400 whitespace-pre-wrap">
+              <pre className="text-sm font-mono text-stone-400 whitespace-pre-wrap">
                 {JSON.stringify(output, null, 2)}
               </pre>
             )}
@@ -165,8 +171,9 @@ export default function GeminiRunner() {
         )}
 
         {!loading && !error && !output && (
-          <p className="text-zinc-500 italic">Awaiting input...</p>
+          <p className="text-sm text-stone-600"> ← Get started to debug your code. Psst, I'm hungry <span className="opacity-60"> 👀</span></p>
         )}
+      </div>
       </div>
     </section>
   );
